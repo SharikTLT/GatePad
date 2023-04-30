@@ -76,9 +76,10 @@ class RelayService(val context: Context) {
             if (it.relays.isNotEmpty()) {
                 var relayData = RelayData(
                     id = it.relays[0].id,
-                    titleUser = it.name,
                     titleOrigin = it.relays[0].name,
-                    isActive = true
+                    titleUser = it.name,
+                    isActive = true,
+                    icon = -1
                 )
                 list.add(relayData)
             }

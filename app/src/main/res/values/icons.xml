@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <array
+            name="icons">
+            <item>@mipmap/ic_selectable_plovmania</item>
+            <item>@mipmap/ic_selectable_pyatorochka</item>
+            <item>@mipmap/ic_selectable_basket</item>
+            <item>@mipmap/ic_selectable_kuulklever</item>
+            <item>@mipmap/ic_selectable_vkusvil</item>
+        </array>
+</resources>

@@ -29,6 +29,7 @@
             android:value="1"
             tools:ignore="MetadataTagInsideApplicationTag" />
 
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

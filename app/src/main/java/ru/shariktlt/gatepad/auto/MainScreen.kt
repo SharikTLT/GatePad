@@ -1,10 +1,13 @@
 package ru.shariktlt.gatepad.auto
 
+import android.graphics.drawable.Icon
 import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.model.*
+import androidx.core.graphics.drawable.IconCompat
+import ru.shariktlt.gatepad.R
 import ru.shariktlt.gatepad.RelayData
 import ru.shariktlt.gatepad.RelayService
 
@@ -44,17 +47,29 @@ class MainScreen(carContext: CarContext) : Screen(carContext) {
         val listBuilder = ItemList.Builder()
 
         pads.forEach {
+            val iconId = if (it.icon == -1) R.drawable.boom_gate_up_icon else it.icon
+            val icon = CarIcon.Builder(IconCompat.createWithResource(carContext, iconId)).build()
+
             listBuilder.addItem(
                 GridItem.Builder()
                     .setTitle(it.titleUser)
-                    .setImage(CarIcon.APP_ICON)
+                    .setImage(icon)
                     .setOnClickListener {
                         Log.i(TAG, "onClick ${it.titleUser}")
-                        CarToast.makeText(
-                            carContext,
-                            "Нажали на ${it.titleUser}",
-                            CarToast.LENGTH_SHORT
-                        ).show()
+                        relayService.unlock(it, {
+                            CarToast.makeText(
+                                carContext,
+                                "Открыт ${it.titleUser}",
+                                CarToast.LENGTH_SHORT
+                            ).show()
+                        }, {
+                            CarToast.makeText(
+                                carContext,
+                                "Ошибка ${it.titleUser}",
+                                CarToast.LENGTH_SHORT
+                            ).show()
+                        })
+
                     }
                     .build()
             )

@@ -37,6 +37,22 @@
             android:inputType="number"
             android:text="123456" />
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="210dp">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:layout_editor_absoluteY="726dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/iconRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </ScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <Button
             android:id="@+id/editSaveBtn"
             android:layout_width="match_parent"
