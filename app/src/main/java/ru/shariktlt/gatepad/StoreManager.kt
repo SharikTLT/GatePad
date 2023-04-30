@@ -1,6 +1,7 @@
 package ru.shariktlt.gatepad
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -9,12 +10,16 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.startup.Initializer
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
 import ru.shariktlt.gatepad.IStoreManager.Companion.getInstance
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
 
@@ -55,9 +60,11 @@ class StoreManager(context: Context) : IStoreManager {
     private var isReady = CompletableFuture<Boolean>()
 
     init {
+        Log.i(TAG, "Initialize storage")
         store = context.apiDataStore
-        store.data
+        val initFlow = store.data
             .catch {
+                Log.e(TAG, "Exception during initialization", it)
                 if (it is IOException) {
                     it.printStackTrace()
                     emit(emptyPreferences())
@@ -74,14 +81,21 @@ class StoreManager(context: Context) : IStoreManager {
                         it[UID] = uid.get()
                     }
                 }
-                isReady.complete(true)
+                Log.i(TAG, "Mapped init storage")
+                it
             }
+
+        Log.i(TAG, "Before collect")
+        runBlocking {
+            initFlow.first {
+                isReady.complete(true)
+                Log.i(TAG, "Init is ready")
+                true
+            }
+        }
+        Log.i(TAG, "After collect")
     }
 
-    private val JWT_KEY = stringPreferencesKey("pikJwt")
-    private val RELAYS_ORIG = stringPreferencesKey("original")
-    private val RELAYS_SHORTCUT = stringPreferencesKey("shortcut")
-    private val UID = stringPreferencesKey("uid")
 
     override fun getJWT(): String {
         waitReady()
@@ -129,11 +143,23 @@ class StoreManager(context: Context) : IStoreManager {
 
     private fun waitReady() {
         if (!isReady.isDone) {
-            isReady.get()
+            try {
+                Log.i(TAG, "Wait for ready")
+                isReady.get(10, TimeUnit.SECONDS)
+            } finally {
+                Log.i(TAG, "Waiting is over")
+            }
         }
     }
 
+    companion object {
+        private val JWT_KEY = stringPreferencesKey("pikJwt")
+        private val RELAYS_ORIG = stringPreferencesKey("original")
+        private val RELAYS_SHORTCUT = stringPreferencesKey("shortcut")
+        private val UID = stringPreferencesKey("uid")
 
+        private val TAG = (StoreManager::class.qualifiedName)!!
+    }
 }
 
 class StorageManagerInitializer : Initializer<IStoreManager> {

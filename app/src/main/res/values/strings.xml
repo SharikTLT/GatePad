@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">GatePad</string>
     <string name="my_app_name">Gate Pad</string>
+    <string name="title_activity_log_in">LogInActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="logInTitle">Аутентификация</string>
+    <string name="phoneHint">Номер телефона +7…</string>
+    <string name="passwordHint">Пароль</string>
+    <string name="logInBtn">Вход</string>
+    <string name="confirm_edit">Update</string>
+    <string name="cancel_edit">Cancel</string>
 </resources>
