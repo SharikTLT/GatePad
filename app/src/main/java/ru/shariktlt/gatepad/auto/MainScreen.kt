@@ -8,6 +8,7 @@ import androidx.car.app.model.*
 
 class MainScreen(carContext: CarContext) : Screen(carContext) {
     override fun onGetTemplate(): Template {
+
         val listBuilder = ItemList.Builder()
         for(i in 1..6){
             listBuilder.addItem(
